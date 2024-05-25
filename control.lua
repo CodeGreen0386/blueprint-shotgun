@@ -52,6 +52,12 @@ local function setup_globals()
 
     ---@type table<uint, BlueprintShotgun.CharacterData>
     global.characters = global.characters or {}
+
+    ---@type table<string, true>
+    global.ultracube_item_prototypes = {}
+    if script.active_mods['Ultracube'] then
+        global.ultracube_item_prototypes = remote.call("Ultracube", "cube_item_prototypes")
+    end
 end
 
 script.on_init(setup_globals)
