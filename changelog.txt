@@ -1,0 +1,63 @@
+---------------------------------------------------------------------------------------------------
+Version: 0.0.11
+Date: 2024-05-14
+  Bugfixes:
+    - Fixed mining infinity chests attempting to suck the items out of the chest first
+    - Fixed rare crash when mining tiles
+---------------------------------------------------------------------------------------------------
+Version: 0.0.10
+Date: 2024-04-24
+  Bugfixes:
+    - Fixed crash when running out of ammo while vacuuming entities and items in the same tick
+---------------------------------------------------------------------------------------------------
+Version: 0.0.9
+Date: 2024-04-10
+  Bugfixes:
+    - Fixed crash with composite entities created by the shotgun
+---------------------------------------------------------------------------------------------------
+Version: 0.0.8
+Date: 2024-03-27
+  Bugfixes:
+    - Fixed vacuum startup sound playing globally in multiplayer
+---------------------------------------------------------------------------------------------------
+Version: 0.0.7
+Date: 2024-03-22
+  Bugfixes:
+    - Fixed issue with duplicating modules when inserted into item request proxies
+---------------------------------------------------------------------------------------------------
+Version: 0.0.6
+Date: 2024-03-18
+  Bugfixes:
+    - Fixed crash with mining multiple entities in the same tick
+---------------------------------------------------------------------------------------------------
+Version: 0.0.5
+Date: 2024-03-16
+  Bugfixes:
+    - Fixed incorrect collision calculation of curved rails
+---------------------------------------------------------------------------------------------------
+Version: 0.0.4
+Date: 2024-03-16
+  Bugfixes:
+    - Fixed crash with probability-based entity mining results
+  Changes:
+    - Added setting to disable auto-swap of build and vacuum mode
+    - Added cheat setting to add a bonus to the item capacity and mining speed
+  Balancing:
+    - Reduced cost of initial technology to 50 packs
+---------------------------------------------------------------------------------------------------
+Version: 0.0.3
+Date: 2024-02-29
+  Bugfixes:
+    - Fixed incorrect mining progress bar size on rotated entities with non-square collision boxes
+    - Fixed cliffs being able to be precisely shot at twice due to sub-tick event ordering
+---------------------------------------------------------------------------------------------------
+Version: 0.0.2
+Date: 2024-02-28
+  Bugfixes:
+    - Fixed vacuum mode doing only one type of mining at a time
+    - Fixed crash with building ghost curved rails
+---------------------------------------------------------------------------------------------------
+Version: 0.0.1
+Date: 2024-02-28
+  Features:
+    - Initial Release
