@@ -64,6 +64,11 @@ function lib.on_tick(event)
             if item.height <= 0 then
                 utils.exact_spill(item.surface, item.position, item.slot[1], item.deconstruct)
                 game.play_sound{path = "utility/drop_item", position = item.position}
+
+                if item.ultracube_token_id then
+                    remote.call("Ultracube", "release_ownership_token", item.ultracube_token_id)
+                end
+
                 item.slot.destroy()
                 rendering.destroy(id)
                 rendering.destroy(item.shadow)
@@ -85,6 +90,11 @@ function lib.on_tick(event)
                         player.print(message, {skip = defines.print_skip.if_visible})
                     end
                 else
+                    if item.ultracube_token_id then
+                        remote.call("Ultracube", "release_ownership_token", item.ultracube_token_id)
+                        remote.call("Ultracube", "hint_entity", item.character)
+                    end
+
                     item.slot.destroy()
                     rendering.destroy(id)
                     rendering.destroy(item.shadow)
@@ -104,6 +114,13 @@ function lib.on_tick(event)
             item.height = item.height + 1/30 * (1 - item.height)
             item.velocity = new_velocity
             item.position = vec.add(new_velocity, item.position)
+        end
+
+        if item.ultracube_token_id then
+            remote.call("Ultracube", "update_ownership_token", item.ultracube_token_id, 60, {
+                position = item.position,
+                velocity = item.velocity,
+            })
         end
 
         rendering.set_target(id, vec.add(item.position, {x = 0, y = -item.height}))
@@ -146,3 +163,4 @@ return lib
 ---@field orientation_deviation number
 ---@field shadow uint
 ---@field deconstruct ForceIdentification?
+---@field ultracube_token_id uint?

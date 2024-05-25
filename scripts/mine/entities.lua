@@ -64,7 +64,19 @@ function lib.process(params)
                 orientation_deviation = utils.orientation_deviaiton(),
                 shadow = shadow,
                 deconstruct = params.character.force,
+                ultracube_token_id = nil,
             }
+
+            if global.ultracube_item_prototypes and global.ultracube_item_prototypes[slot[1].name] then
+                global.vacuum_items[id].ultracube_token_id = remote.call("Ultracube", "create_ownership_token", slot[1].name, slot[1].count, 60, {
+                    surface = params.surface,
+                    position = position,
+                    spill_position = position,
+                    velocity = global.vacuum_items[id].velocity,
+                    height = 0,
+                })
+            end
+
             goto continue
         end
 
@@ -113,7 +125,18 @@ function lib.process(params)
                 orientation_deviation = utils.orientation_deviaiton(),
                 shadow = shadow,
                 deconstruct = params.character.force,
+                ultracube_token_id = nil,
             }
+
+            if global.ultracube_item_prototypes and global.ultracube_item_prototypes[slot[1].name] then
+                global.vacuum_items[id].ultracube_token_id = remote.call("Ultracube", "create_ownership_token", slot[1].name, slot[1].count, 60, {
+                    surface = params.surface,
+                    position = position,
+                    spill_position = position,
+                    velocity = global.vacuum_items[id].velocity,
+                    height = 0,
+                })
+            end
         end
         temp_inventory.destroy()
 

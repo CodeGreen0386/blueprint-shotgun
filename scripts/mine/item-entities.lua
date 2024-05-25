@@ -36,7 +36,18 @@ function lib.process(params)
             orientation_deviation = utils.orientation_deviaiton(),
             shadow = shadow,
             deconstruct = entity.to_be_deconstructed() and params.character.force or nil,
+            ultracube_token_id = nil,
         }
+        if global.ultracube_item_prototypes and global.ultracube_item_prototypes[stack.name] then
+            global.vacuum_items[id].ultracube_token_id = remote.call("Ultracube", "create_ownership_token", stack.name, stack.count, 60, {
+                surface = params.surface,
+                position = position,
+                spill_position = position,
+                velocity = global.vacuum_items[id].velocity,
+                height = 0,
+            })
+        end
+
         slot[1].transfer_stack(stack) -- destroys the item
 
         params.ammo_item.drain_ammo(1/8)
