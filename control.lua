@@ -196,4 +196,24 @@ script.on_event(e.on_entity_destroyed, function(event)
     global.to_explode[event.registration_number] = nil
 end)
 
--- TODO: surface deleted?
+script.on_event(e.on_surface_deleted, function(event)
+    for id, item in pairs(global.flying_items) do
+        if item.surface.valid then goto continue end
+        global.flying_items[id] = nil
+
+        local entity = item.target_entity
+        if not entity then goto continue end
+        global.to_build[item.unit_number] = nil
+        global.to_insert[item.unit_number] = nil
+        global.to_upgrade[item.unit_number] = nil
+
+        ::continue::
+    end
+
+    for id, item in pairs(global.vacuum_items) do
+        if item.surface.valid then goto continue end
+        global.vacuum_items[id] = nil
+
+        ::continue::
+    end
+end)
