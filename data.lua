@@ -96,7 +96,7 @@ data:extend{
         type = "sound",
         name = "blueprint-shotgun-shoot",
         category = "game-effect",
-        filename = "__blueprint-shotgun__/sounds/shoot.wav",
+        filename = "__blueprint-shotgun__/sounds/shoot.ogg",
         min_speed = 0.95,
         max_speed = 1.05,
         game_controller_vibration_data =
@@ -109,7 +109,7 @@ data:extend{
         type = "sound",
         name = "blueprint-shotgun-vacuum-start",
         category = "game-effect",
-        filename = "__blueprint-shotgun__/sounds/vacuum-start.wav",
+        filename = "__blueprint-shotgun__/sounds/vacuum-start.ogg",
         game_controller_vibration_data = {
             high_frequency_vibration_intensity = 0.6,
             duration = 100,
@@ -185,7 +185,7 @@ for i = 1, 160 do
         type = "sound",
         name = "blueprint-shotgun-vacuum-" .. i,
         category = "game-effect",
-        filename = "__blueprint-shotgun__/sounds/vacuum/vacuum-" .. i .. ".wav",
+        filename = "__blueprint-shotgun__/sounds/vacuum/vacuum-" .. i .. ".ogg",
         game_controller_vibration_data = {
             low_frequency_vibration_intensity = 0.4,
             duration = 100,
