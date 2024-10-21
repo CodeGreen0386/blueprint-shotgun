@@ -30,8 +30,6 @@ function render.draw_new_item(surface, item, position, height, orientation)
     return id, shadow
 end
 
-    local destroy = rendering.destroy
-    local set_to = rendering.set_to
     local draw_line = rendering.draw_line
 
 ---@param data BlueprintShotgun.MiningData
@@ -40,8 +38,8 @@ function render.mining_progress(data)
     local surface = entity.surface
 
     if data.progress <= 0 then
-        if data.bar then destroy(data.bar) end
-        if data.bar_black then destroy(data.bar_black) end
+        if data.bar then data.bar.destroy() end
+        if data.bar_black then data.bar_black.destroy() end
         return
     end
 
@@ -51,7 +49,7 @@ function render.mining_progress(data)
     local to_offset = {x = distance, y = rb.y}
     local bar = data.bar
     if bar then
-        set_to(bar, entity, to_offset)
+        bar.to = {entity, to_offset}
     else
         data.bar_black = draw_line{
             color = {0,0,0},
