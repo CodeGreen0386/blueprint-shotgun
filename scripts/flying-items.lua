@@ -16,7 +16,7 @@ local lib = {}
 
 ---@param event EventData.on_tick
 function lib.on_tick(event)
-    for id, item in pairs(global.flying_items) do
+    for id, item in pairs(storage.flying_items) do
         local time_remaining = item.end_tick - event.tick
 
         if time_remaining == 0 then
@@ -24,7 +24,7 @@ function lib.on_tick(event)
 
             rendering.destroy(id)
             rendering.destroy(item.shadow)
-            global.flying_items[id] = nil
+            storage.flying_items[id] = nil
             goto continue
         end
 
@@ -49,7 +49,7 @@ function lib.on_tick(event)
         ::continue::
     end
 
-    for id, item in pairs(global.vacuum_items) do
+    for id, item in pairs(storage.vacuum_items) do
         item.time = item.time + 1
 
         if not (item.falling or item.character.valid) then
@@ -67,7 +67,7 @@ function lib.on_tick(event)
                 item.slot.destroy()
                 rendering.destroy(id)
                 rendering.destroy(item.shadow)
-                global.vacuum_items[id] = nil
+                storage.vacuum_items[id] = nil
                 goto continue
             end
         else
@@ -88,7 +88,7 @@ function lib.on_tick(event)
                     item.slot.destroy()
                     rendering.destroy(id)
                     rendering.destroy(item.shadow)
-                    global.vacuum_items[id] = nil
+                    storage.vacuum_items[id] = nil
                     goto continue
                 end
             end

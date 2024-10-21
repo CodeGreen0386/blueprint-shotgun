@@ -24,7 +24,7 @@ function lib.process(params)
         if entity.minable == false then goto continue end
         if entity.prototype.mineable_properties.minable == false then goto continue end
         local entity_id = entity.unit_number or script.register_on_entity_destroyed(entity)
-        local data = global.to_mine[entity_id]
+        local data = storage.to_mine[entity_id]
         if not data then
             local mineable_properties = entity.prototype.mineable_properties
             data = {
@@ -32,7 +32,7 @@ function lib.process(params)
                 progress = 0,
                 mining_time = math.max(mineable_properties.mining_time, 0.5) * 60,
             }
-            global.to_mine[entity_id] = data
+            storage.to_mine[entity_id] = data
         end
 
         local stack
@@ -53,7 +53,7 @@ function lib.process(params)
             rendering.move_to_back(id)
             local slot = game.create_inventory(1)
             slot[1].transfer_stack(stack)
-            global.vacuum_items[id] = {
+            storage.vacuum_items[id] = {
                 slot = slot,
                 surface = params.surface,
                 character = params.character,
@@ -70,7 +70,7 @@ function lib.process(params)
 
         local progress = params.mining_speed / math.max(1, vec.dist(params.target_pos, entity.position))
         data.progress = data.progress + progress
-        global.currently_mining[entity_id] = true
+        storage.currently_mining[entity_id] = true
 
         if data.progress < data.mining_time then goto continue end
 
@@ -93,7 +93,7 @@ function lib.process(params)
             temp_inventory.resize(size)
             success = entity.mine{inventory = temp_inventory, force = false, raise_destroyed = true}
         end
-        global.to_mine[entity_id] = nil
+        storage.to_mine[entity_id] = nil
 
         for i = 1, #temp_inventory do
             local item = temp_inventory[i]
@@ -102,7 +102,7 @@ function lib.process(params)
             rendering.move_to_back(id)
             local slot = game.create_inventory(1)
             slot[1].transfer_stack(item)
-            global.vacuum_items[id] = {
+            storage.vacuum_items[id] = {
                 slot = slot,
                 surface = params.surface,
                 character = params.character,

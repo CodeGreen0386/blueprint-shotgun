@@ -18,8 +18,8 @@ function lib.process(params)
     utils.arc_cull(proxies, params.character.position, params.target_pos)
 
     for _, proxy in pairs(proxies) do
-        local to_insert = global.to_insert[proxy.unit_number] or {}
-        global.to_insert = to_insert
+        local to_insert = storage.to_insert[proxy.unit_number] or {}
+        storage.to_insert = to_insert
 
         local requests = proxy.item_requests
         for name, count in pairs(to_insert) do
@@ -44,7 +44,7 @@ function lib.process(params)
 
         local id, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
         local duration = utils.get_flying_item_duration(params.source_pos, proxy.position)
-        global.flying_items[id] = {
+        storage.flying_items[id] = {
             action = "request",
             surface = params.surface,
             force = params.force,

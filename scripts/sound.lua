@@ -3,7 +3,7 @@ local lib = {}
 function lib.on_tick(event)
     if event.tick % 3 ~= 0 then return end
 
-    for _, data in pairs(global.characters) do
+    for _, data in pairs(storage.characters) do
         local character = data.character
         if not character.valid then goto continue end
 

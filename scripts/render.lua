@@ -90,23 +90,23 @@ local tick_rate = 3
 function render.on_tick(event)
     if event.tick % tick_rate ~= 0 then return end
 
-    for entity_id, data in pairs(global.to_mine) do
+    for entity_id, data in pairs(storage.to_mine) do
         if not data.entity.valid then
-            global.to_mine[entity_id] = nil
+            storage.to_mine[entity_id] = nil
             goto continue
         end
 
-        if not global.currently_mining[entity_id] then
+        if not storage.currently_mining[entity_id] then
             data.progress = data.progress - 1/2 * tick_rate
         end
         render.mining_progress(data)
         if data.progress <= 0 then
-            global.to_mine[entity_id] = nil
+            storage.to_mine[entity_id] = nil
         end
 
         ::continue::
     end
-    global.currently_mining = {}
+    storage.currently_mining = {}
 end
 
 return render
