@@ -37,6 +37,7 @@ data:extend{
                 },
             },
         },
+        ammo_category = "bullet",
         subgroup = "ammo",
         order = "a[a-blueprint-shotgun]",
     } --[[@as data.AmmoItemPrototype]],
@@ -84,9 +85,9 @@ data:extend{
             recipe = "item-canister",
         }},
         unit = {
-            count = 50,
+            count_formula = "L",
             ingredients = {
-                {type = "item", name = "automation-science-pack", amount = 1},
+                {"automation-science-pack", 50},
             },
             time = 30,
         },
@@ -150,11 +151,11 @@ data:extend{
 }
 
 for i = 1, 2 do
-    local ingredients = {{type = "item", name = "automation-science-pack", amount = 1}}
+    local ingredients = {
+      {{"automation-science-pack", 1}},
+      {{"automation-science-pack", 1}, {"logistic-science-pack", 1}},
+    }
     local prerequisites = i == 1 and {"blueprint-shotgun"} or {"blueprint-shotgun-upgrade-1", "logistic-science-pack"}
-    if i == 2 then
-        ingredients[2] = {type = "item", name = "logistic-science-pack", amount = 1}
-    end
 
     data:extend{{
         type = "technology",
@@ -169,13 +170,13 @@ for i = 1, 2 do
             effect_description = {"blueprint-shotgun.vacuum-upgrade"}
         }},
         unit = {
-            count = i * 100,
-            ingredients = ingredients,
+            count_formula = "100*L",
+            ingredients = ingredients[i],
             time = 30,
         },
         prerequisites = prerequisites,
         upgrade = true,
-        localised_name = {"technology-name.blueprint-shotgun-upgrade", i},
+        localised_name = {"technology-name.blueprint-shotgun-upgrade", "" .. i},
         localised_description = {"technology-description.blueprint-shotgun-upgrade"},
     }} --[=[@as data.TechnologyPrototype[]]=]
 end
@@ -222,6 +223,7 @@ data:extend{{
     maximum_corner_sliding_distance = 0,
     mining_speed = 0,
     mining_with_tool_particles_animation_positions = {0},
+    moving_sound_animation_positions = {0},
     reach_distance = 0,
     reach_resource_distance = 0,
     running_sound_animation_positions = {0},
