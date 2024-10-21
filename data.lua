@@ -24,7 +24,6 @@ data:extend{
         stack_size = 200,
         magazine_size = 25,
         ammo_type = {
-            category = "blueprint-ammo",
             target_type = "position",
             action = {
                 type = "direct",
@@ -37,7 +36,7 @@ data:extend{
                 },
             },
         },
-        ammo_category = "bullet",
+        ammo_category = "blueprint-ammo",
         subgroup = "ammo",
         order = "a[a-blueprint-shotgun]",
     } --[[@as data.AmmoItemPrototype]],
