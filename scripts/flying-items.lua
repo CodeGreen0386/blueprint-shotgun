@@ -39,7 +39,7 @@ function lib.on_tick(event)
         local shadow_pos = vec.add(ground_pos, {x = height, y = 0})
         
         item.target = air_pos
-        --item.orientation = item.orientation + item.orientation_deviation
+        sprite.orientation = sprite.orientation + item.orientation_deviation
 
         local scale = 1 / (height / 3 + 1)
         shadow.target = shadow_pos
@@ -53,7 +53,7 @@ function lib.on_tick(event)
         item.time = item.time + 1
         local shadow = item.shadow
 
-        if not (item.falling or item.character.valsprite) then
+        if not (item.falling or item.character.valid) then
             item.falling = item.time
         end
 
@@ -112,7 +112,7 @@ function lib.on_tick(event)
         local scale = 1 / (item.height / 3 + 1)
         shadow.x_scale = scale
         shadow.y_scale = scale
-        --item.orientation = item.orientation + item.orientation_deviation * math.min(1, item.time / 30)
+        sprite.orientation = sprite.orientation + item.orientation_deviation * math.min(1, item.time / 30)
 
         ::continue::
     end
