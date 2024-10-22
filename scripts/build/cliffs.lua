@@ -22,7 +22,7 @@ function lib.process(params)
         local explosive_name = cliff.prototype.cliff_explosive_prototype --[[@as string]]
         if params.inventory.get_item_count(explosive_name) == 0 then goto continue end
 
-        if global.to_explode[script.register_on_entity_destroyed(cliff)] then goto continue end
+        if storage.to_explode[script.register_on_object_destroyed(cliff)] then goto continue end
 
         local capsule_action = game.item_prototypes[explosive_name].capsule_action --[[@as CapsuleAction]]
         local cliff_position = utils.get_bounding_box_center(cliff)
@@ -47,8 +47,8 @@ function lib.process(params)
             radius = capsule_action.radius + 1
         })
         for _, exploding_cliff in pairs(exploding_cliffs) do
-            local reg_id = script.register_on_entity_destroyed(exploding_cliff)
-            global.to_explode[reg_id] = true
+            local reg_id = script.register_on_object_destroyed(exploding_cliff)
+            storage.to_explode[reg_id] = true
             to_explode[reg_id] = true
         end
 
@@ -56,7 +56,7 @@ function lib.process(params)
 
         local id, shadow = render.draw_new_item(params.surface, explosive_name, params.source_pos)
         local duration = utils.get_flying_item_duration(params.source_pos, center)
-        global.flying_items[id] = {
+        storage.flying_items[id] = {
             action = "cliff",
             surface = params.surface,
             force = params.character.force,
@@ -88,20 +88,20 @@ function lib.action(item)
     }
 
     local tick = game.tick + 1
-    local queue = global.remove_explode_queue[tick] or {}
-    global.remove_explode_queue[tick] = queue
+    local queue = storage.remove_explode_queue[tick] or {}
+    storage.remove_explode_queue[tick] = queue
     for reg_id in pairs(item.to_explode) do
         queue[#queue+1] = reg_id
     end
 end
 
 function lib.on_tick(event)
-    local queue = global.remove_explode_queue[event.tick]
+    local queue = storage.remove_explode_queue[event.tick]
     if not queue then return end
     for _, reg_id in pairs(queue) do
-        global.to_explode[reg_id] = nil
+        storage.to_explode[reg_id] = nil
     end
-    global.remove_explode_queue[event.tick] = nil
+    storage.remove_explode_queue[event.tick] = nil
 end
 
 return lib

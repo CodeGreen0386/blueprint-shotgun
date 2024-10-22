@@ -24,34 +24,34 @@ local mine = {
 
 local function setup_globals()
     ---@type table<uint, FlyingItem>
-    global.flying_items = global.flying_items or {}
+    storage.flying_items = storage.flying_items or {}
 
     ---@type table<uint, VacuumItem>
-    global.vacuum_items = global.vacuum_items or {}
+    storage.vacuum_items = storage.vacuum_items or {}
 
     ---@type table<uint, uint[]?>
-    global.remove_explode_queue = global.remove_explode_queue or {}
+    storage.remove_explode_queue = storage.remove_explode_queue or {}
 
     ---@type table<uint, true>
-    global.to_explode = global.to_explode or {}
+    storage.to_explode = storage.to_explode or {}
 
     ---@type table<uint, true>
-    global.to_build = global.to_build or {}
+    storage.to_build = storage.to_build or {}
 
     ---@type table<uint, true>
-    global.to_upgrade = global.to_upgrade or {}
+    storage.to_upgrade = storage.to_upgrade or {}
 
     ---@type table<uint, table<string, uint>>
-    global.to_insert = global.to_insert or {}
+    storage.to_insert = storage.to_insert or {}
 
     ---@type table<uint, BlueprintShotgun.MiningData>
-    global.to_mine = global.to_mine or {}
+    storage.to_mine = storage.to_mine or {}
 
     ---@type table<uint, true>
-    global.currently_mining = global.currently_mining or {}
+    storage.currently_mining = storage.currently_mining or {}
 
     ---@type table<uint, BlueprintShotgun.CharacterData>
-    global.characters = global.characters or {}
+    storage.characters = storage.characters or {}
 end
 
 script.on_init(setup_globals)
@@ -190,29 +190,29 @@ script.on_event(e.on_tick, function(event)
     sound.on_tick(event)
 end)
 
-script.on_event(e.on_entity_destroyed, function(event)
+script.on_event(e.on_object_destroyed, function(event)
     if not event.unit_number then return end
-    global.characters[event.unit_number] = nil
-    global.to_explode[event.registration_number] = nil
+    storage.characters[event.unit_number] = nil
+    storage.to_explode[event.registration_number] = nil
 end)
 
 script.on_event(e.on_surface_deleted, function(event)
-    for id, item in pairs(global.flying_items) do
+    for id, item in pairs(storage.flying_items) do
         if item.surface.valid then goto continue end
-        global.flying_items[id] = nil
+        storage.flying_items[id] = nil
 
         local entity = item.target_entity
         if not entity then goto continue end
-        global.to_build[item.unit_number] = nil
-        global.to_insert[item.unit_number] = nil
-        global.to_upgrade[item.unit_number] = nil
+        storage.to_build[item.unit_number] = nil
+        storage.to_insert[item.unit_number] = nil
+        storage.to_upgrade[item.unit_number] = nil
 
         ::continue::
     end
 
-    for id, item in pairs(global.vacuum_items) do
+    for id, item in pairs(storage.vacuum_items) do
         if item.surface.valid then goto continue end
-        global.vacuum_items[id] = nil
+        storage.vacuum_items[id] = nil
 
         ::continue::
     end

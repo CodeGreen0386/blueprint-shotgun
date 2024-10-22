@@ -19,8 +19,8 @@ function lib.process(params)
     if #entities == 0 then return end
 
     for _, proxy in pairs(entities) do
-        local proxy_id = script.register_on_entity_destroyed(proxy)
-        local data = global.to_mine[proxy_id]
+        local proxy_id = script.register_on_object_destroyed(proxy)
+        local data = storage.to_mine[proxy_id]
         if not data then
             local mineable_properties = proxy.prototype.mineable_properties
             data = {
@@ -28,12 +28,12 @@ function lib.process(params)
                 progress = 0,
                 mining_time = math.max(mineable_properties.mining_time, 0.5) * 60,
             }
-            global.to_mine[proxy_id] = data
+            storage.to_mine[proxy_id] = data
         end
 
         local progress = params.mining_speed / math.max(1, vec.dist(params.target_pos, proxy.position))
         data.progress = data.progress + progress
-        global.currently_mining[proxy_id] = true
+        storage.currently_mining[proxy_id] = true
 
         if data.progress < data.mining_time then goto continue end
 
@@ -54,7 +54,7 @@ function lib.process(params)
             temp_inventory.resize(size)
             success = proxy.mine{inventory = temp_inventory, force = false, raise_destroyed = true}
         end
-        global.to_mine[proxy_id] = nil
+        storage.to_mine[proxy_id] = nil
 
         for i = 1, #temp_inventory do
             local item = temp_inventory[i]
@@ -63,7 +63,7 @@ function lib.process(params)
             rendering.move_to_back(id)
             local slot = game.create_inventory(1)
             slot[1].transfer_stack(item)
-            global.vacuum_items[id] = {
+            storage.vacuum_items[id] = {
                 slot = slot,
                 surface = params.surface,
                 character = params.character,

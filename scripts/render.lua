@@ -10,7 +10,7 @@ local render = {}
 ---@param orientation? RealOrientation
 function render.draw_new_item(surface, item, position, height, orientation)
     height = height or 1
-    local id = rendering.draw_sprite{
+    local sprite = rendering.draw_sprite{
         sprite = "item/" .. item,
         surface = surface,
         target = vec.add(position, {x = 0, y = -height}),
@@ -27,11 +27,9 @@ function render.draw_new_item(surface, item, position, height, orientation)
         y_scale = 0.5,
     }
 
-    return id, shadow
+    return sprite, shadow
 end
 
-    local destroy = rendering.destroy
-    local set_to = rendering.set_to
     local draw_line = rendering.draw_line
 
 ---@param data BlueprintShotgun.MiningData
@@ -40,35 +38,30 @@ function render.mining_progress(data)
     local surface = entity.surface
 
     if data.progress <= 0 then
-        if data.bar then destroy(data.bar) end
-        if data.bar_black then destroy(data.bar_black) end
+        if data.bar then data.bar.destroy() end
+        if data.bar_black then data.bar_black.destroy() end
         return
     end
 
-    local bb = entity.bounding_box
-    local lt, rb = vec.sub(bb.left_top, entity.position), vec.sub(bb.right_bottom, entity.position)
+    local lt, rb = entity.bounding_box.left_top, entity.bounding_box.right_bottom
     local distance = lt.x + (rb.x - lt.x) * data.progress / data.mining_time
     local to_offset = {x = distance, y = rb.y}
     local bar = data.bar
     if bar then
-        set_to(bar, entity, to_offset)
+        bar.to = to_offset
     else
         data.bar_black = draw_line{
             color = {0,0,0},
             surface = surface,
-            from = entity,
-            to = entity,
-            from_offset = {x = lt.x, y = rb.y},
-            to_offset = {x = rb.x, y = rb.y},
+            from = {x = lt.x, y = rb.y},
+            to = {x = rb.x, y = rb.y},
             width = 2,
         }
         data.bar = draw_line{
             color = {250, 168, 56},
             surface = surface,
-            from = entity,
-            to = entity,
-            from_offset = {x = lt.x, y = rb.y},
-            to_offset = to_offset,
+            from = {x = lt.x, y = rb.y},
+            to = to_offset,
             width = 2,
         }
     end
@@ -92,23 +85,23 @@ local tick_rate = 3
 function render.on_tick(event)
     if event.tick % tick_rate ~= 0 then return end
 
-    for entity_id, data in pairs(global.to_mine) do
+    for entity_id, data in pairs(storage.to_mine) do
         if not data.entity.valid then
-            global.to_mine[entity_id] = nil
+            storage.to_mine[entity_id] = nil
             goto continue
         end
 
-        if not global.currently_mining[entity_id] then
+        if not storage.currently_mining[entity_id] then
             data.progress = data.progress - 1/2 * tick_rate
         end
         render.mining_progress(data)
         if data.progress <= 0 then
-            global.to_mine[entity_id] = nil
+            storage.to_mine[entity_id] = nil
         end
 
         ::continue::
     end
-    global.currently_mining = {}
+    storage.currently_mining = {}
 end
 
 return render

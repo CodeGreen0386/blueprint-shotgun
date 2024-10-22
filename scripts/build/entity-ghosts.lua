@@ -18,7 +18,7 @@ function lib.process(params)
     utils.arc_cull(ghosts, params.character.position, params.target_pos)
 
     for _, ghost in pairs(ghosts) do
-        if global.to_build[ghost.unit_number] then goto continue end
+        if storage.to_build[ghost.unit_number] then goto continue end
 
         if not params.surface.can_place_entity{
             name = ghost.ghost_name,
@@ -42,9 +42,9 @@ function lib.process(params)
         end
         if not item then goto continue end
 
-        local id, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
+        local sprite, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
         local duration = utils.get_flying_item_duration(params.source_pos, ghost.position)
-        global.flying_items[id] = {
+        storage.flying_items[sprite] = {
             action = "build",
             surface = params.surface,
             force = params.character.force,
@@ -63,7 +63,7 @@ function lib.process(params)
 
         params.inventory.remove(item)
 
-        global.to_build[ghost.unit_number] = true
+        storage.to_build[ghost.unit_number] = true
 
         params.ammo_item.drain_ammo(1)
         params.ammo_limit = params.ammo_limit - 1
@@ -81,13 +81,14 @@ function lib.action(item)
         if success == nil then
             utils.spill_item(item)
         else
-            entity.health = item.health * entity.prototype.max_health
+            local max_health = entity.prototype.get_max_health(item.quality)
+            entity.health = item.health * max_health
             script.raise_script_revive{entity = entity}
         end
     else
         utils.spill_item(item)
     end
-    global.to_build[item.unit_number] = nil
+    storage.to_build[item.unit_number] = nil
 end
 
 return lib

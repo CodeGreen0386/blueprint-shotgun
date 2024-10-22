@@ -18,7 +18,7 @@ function lib.process(params)
     utils.arc_cull(ghosts, params.character.position, params.target_pos)
 
     for _, ghost in pairs(ghosts) do
-        if global.to_build[ghost.unit_number] then goto continue end
+        if storage.to_build[ghost.unit_number] then goto continue end
 
         local place_items = ghost.ghost_prototype.items_to_place_this ---@cast place_items -nil
         local item
@@ -30,9 +30,9 @@ function lib.process(params)
         end
         if not item then goto continue end
 
-        local id, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
+        local sprite, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
         local duration = utils.get_flying_item_duration(params.source_pos, ghost.position)
-        global.flying_items[id] = {
+        storage.flying_items[sprite] = {
             action = "tile",
             surface = params.surface,
             force = params.character.force,
@@ -49,7 +49,7 @@ function lib.process(params)
 
         params.inventory.remove(item)
 
-        global.to_build[ghost.unit_number] = true
+        storage.to_build[ghost.unit_number] = true
 
         params.ammo_item.drain_ammo(1)
         params.ammo_limit = params.ammo_limit - 1
@@ -71,7 +71,7 @@ function lib.action(item)
     else
         utils.spill_item(item)
     end
-    global.to_build[item.unit_number] = nil
+    storage.to_build[item.unit_number] = nil
 end
 
 return lib

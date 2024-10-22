@@ -17,7 +17,7 @@ function lib.process(params)
     utils.arc_cull(entities, params.character.position, params.target_pos)
 
     for _, entity in pairs(entities) do
-        if global.to_upgrade[entity.unit_number] then goto continue end
+        if storage.to_upgrade[entity.unit_number] then goto continue end
         local upgrade_target = entity.get_upgrade_target() --[[@as LuaEntityPrototype]]
         if upgrade_target.name == entity.name then goto continue end
 
@@ -37,14 +37,14 @@ function lib.process(params)
             if connection then
                 -- impossible for connection not be marked for upgrade so no need to check
                 item.count = item.count * 2
-                global.to_upgrade[connection.unit_number] = true
+                storage.to_upgrade[connection.unit_number] = true
             end
         end
         params.inventory.remove(item)
 
         local id, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
         local duration = utils.get_flying_item_duration(params.source_pos, entity.position)
-        global.flying_items[id] = {
+        storage.flying_items[id] = {
             action = "upgrade",
             surface = params.surface,
             force = params.force,
@@ -61,7 +61,7 @@ function lib.process(params)
             connection = connection,
         } --[[@as FlyingUpgradeItem]]
 
-        global.to_upgrade[entity.unit_number] = true
+        storage.to_upgrade[entity.unit_number] = true
 
         params.ammo_item.drain_ammo(1)
         params.ammo_limit = params.ammo_limit - 1
@@ -85,7 +85,7 @@ function lib.action(item)
     else
         utils.spill_item(item)
     end
-    global.to_upgrade[item.unit_number] = nil
+    storage.to_upgrade[item.unit_number] = nil
 end
 
 return lib

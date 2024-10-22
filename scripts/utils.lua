@@ -7,13 +7,13 @@ local utils = {}
 
 ---@param character LuaEntity
 function utils.get_character_data(character)
-    local data = global.characters[character.unit_number]
+    local data = storage.characters[character.unit_number]
     if data then return data end
     ---@class BlueprintShotgun.CharacterData
     ---@field volume float
     data = {character = character, mode = "build", tick = 0, volume = 0}
-    global.characters[character.unit_number] = data
-    script.register_on_entity_destroyed(character)
+    storage.characters[character.unit_number] = data
+    script.register_on_object_destroyed(character)
     return data
 end
 
