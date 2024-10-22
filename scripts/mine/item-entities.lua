@@ -22,10 +22,10 @@ function lib.process(params)
 
         local position = entity.position
         local stack = entity.stack
-        local id, shadow = render.draw_new_item(entity.surface, stack.name, entity.position, 0, 0)
-        rendering.move_to_back(id)
+        local sprite, shadow = render.draw_new_item(entity.surface, stack.name, entity.position, 0, 0)
+        sprite.move_to_back()
         local slot = game.create_inventory(1)
-        storage.vacuum_items[id] = {
+        storage.vacuum_items[sprite] = {
             slot = slot,
             surface = params.surface,
             character = params.character,

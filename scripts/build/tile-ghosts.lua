@@ -30,9 +30,9 @@ function lib.process(params)
         end
         if not item then goto continue end
 
-        local id, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
+        local sprite, shadow = render.draw_new_item(params.surface, item.name, params.source_pos)
         local duration = utils.get_flying_item_duration(params.source_pos, ghost.position)
-        storage.flying_items[id] = {
+        storage.flying_items[sprite] = {
             action = "tile",
             surface = params.surface,
             force = params.character.force,
