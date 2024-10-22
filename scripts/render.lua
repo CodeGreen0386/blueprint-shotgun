@@ -49,7 +49,8 @@ function render.mining_progress(data)
     local to_offset = {x = distance, y = rb.y}
     local bar = data.bar
     if bar then
-        bar.to = {entity, to_offset}
+        bar.from = entity
+        bar.to = to_offset
     else
         data.bar_black = draw_line{
             color = {0,0,0},
