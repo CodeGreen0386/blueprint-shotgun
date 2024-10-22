@@ -43,31 +43,25 @@ function render.mining_progress(data)
         return
     end
 
-    local bb = entity.bounding_box
-    local lt, rb = vec.sub(bb.left_top, entity.position), vec.sub(bb.right_bottom, entity.position)
+    local lt, rb = entity.bounding_box.left_top, entity.bounding_box.right_bottom
     local distance = lt.x + (rb.x - lt.x) * data.progress / data.mining_time
     local to_offset = {x = distance, y = rb.y}
     local bar = data.bar
     if bar then
-        bar.from = entity
         bar.to = to_offset
     else
         data.bar_black = draw_line{
             color = {0,0,0},
             surface = surface,
-            from = entity,
-            to = entity,
-            from_offset = {x = lt.x, y = rb.y},
-            to_offset = {x = rb.x, y = rb.y},
+            from = {x = lt.x, y = rb.y},
+            to = {x = rb.x, y = rb.y},
             width = 2,
         }
         data.bar = draw_line{
             color = {250, 168, 56},
             surface = surface,
-            from = entity,
-            to = entity,
-            from_offset = {x = lt.x, y = rb.y},
-            to_offset = to_offset,
+            from = {x = lt.x, y = rb.y},
+            to = to_offset,
             width = 2,
         }
     end
