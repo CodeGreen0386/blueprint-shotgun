@@ -16,15 +16,15 @@ local lib = {}
 
 ---@param event EventData.on_tick
 function lib.on_tick(event)
-    for id, item in pairs(storage.flying_items) do
+    for sprite, item in pairs(storage.flying_items) do
         local shadow = item.shadow
         local time_remaining = item.end_tick - event.tick
 
         if time_remaining == 0 then
             actions[item.action](item)
-            id.destroy()
+            sprite.destroy()
             shadow.destroy()
-            storage.flying_items[id] = nil
+            storage.flying_items[sprite] = nil
             goto continue
         end
 
@@ -49,11 +49,11 @@ function lib.on_tick(event)
         ::continue::
     end
 
-    for id, item in pairs(storage.vacuum_items) do
+    for sprite, item in pairs(storage.vacuum_items) do
         item.time = item.time + 1
         local shadow = item.shadow
 
-        if not (item.falling or item.character.valid) then
+        if not (item.falling or item.character.valsprite) then
             item.falling = item.time
         end
 
@@ -66,9 +66,9 @@ function lib.on_tick(event)
                 utils.exact_spill(item.surface, item.position, item.slot[1], item.deconstruct)
                 game.play_sound{path = "utility/drop_item", position = item.position}
                 item.slot.destroy()
-                id.destroy()
+                sprite.destroy()
                 shadow.destroy()
-                storage.vacuum_items[id] = nil
+                storage.vacuum_items[sprite] = nil
                 goto continue
             end
         else
@@ -87,9 +87,9 @@ function lib.on_tick(event)
                     end
                 else
                     item.slot.destroy()
-                    id.destroy()
+                    sprite.destroy()
                     shadow.destroy()
-                    storage.vacuum_items[id] = nil
+                    storage.vacuum_items[sprite] = nil
                     goto continue
                 end
             end
