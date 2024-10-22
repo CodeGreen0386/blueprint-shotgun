@@ -75,7 +75,7 @@ function lib.process(params)
         if data.progress < data.mining_time then goto continue end
 
         local sound_path = "entity-mined/" .. entity.name
-        if game.is_valid_sound_path(sound_path) then
+        if helpers.is_valid_sound_path(sound_path) then
             game.play_sound{path = sound_path, position = entity.position}
         end
 
