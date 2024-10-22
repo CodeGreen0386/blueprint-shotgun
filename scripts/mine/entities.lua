@@ -49,11 +49,11 @@ function lib.process(params)
 
         if stack then
             game.play_sound{path = "utility/picked_up_item", position = entity.position}
-            local id, shadow = render.draw_new_item(entity.surface, stack.name, entity.position, 0)
-            rendering.move_to_back(id)
+            local sprite, shadow = render.draw_new_item(entity.surface, stack.name, entity.position, 0)
+            sprite.move_to_back()
             local slot = game.create_inventory(1)
             slot[1].transfer_stack(stack)
-            storage.vacuum_items[id] = {
+            storage.vacuum_items[sprite] = {
                 slot = slot,
                 surface = params.surface,
                 character = params.character,
@@ -98,11 +98,11 @@ function lib.process(params)
         for i = 1, #temp_inventory do
             local item = temp_inventory[i]
             if not item.valid_for_read then break end
-            local id, shadow = render.draw_new_item(params.surface, item.name, position, 0)
-            rendering.move_to_back(id)
+            local sprite, shadow = render.draw_new_item(params.surface, item.name, position, 0)
+            sprite.move_to_back()
             local slot = game.create_inventory(1)
             slot[1].transfer_stack(item)
-            storage.vacuum_items[id] = {
+            storage.vacuum_items[sprite] = {
                 slot = slot,
                 surface = params.surface,
                 character = params.character,

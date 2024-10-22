@@ -10,7 +10,7 @@ local render = {}
 ---@param orientation? RealOrientation
 function render.draw_new_item(surface, item, position, height, orientation)
     height = height or 1
-    local id = rendering.draw_sprite{
+    local sprite = rendering.draw_sprite{
         sprite = "item/" .. item,
         surface = surface,
         target = vec.add(position, {x = 0, y = -height}),
@@ -27,7 +27,7 @@ function render.draw_new_item(surface, item, position, height, orientation)
         y_scale = 0.5,
     }
 
-    return id, shadow
+    return sprite, shadow
 end
 
     local draw_line = rendering.draw_line

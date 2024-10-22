@@ -66,7 +66,7 @@ function lib.on_tick(event)
                 utils.exact_spill(item.surface, item.position, item.slot[1], item.deconstruct)
                 game.play_sound{path = "utility/drop_item", position = item.position}
                 item.slot.destroy()
-                item.destroy()
+                id.destroy()
                 shadow.destroy()
                 storage.vacuum_items[id] = nil
                 goto continue
@@ -87,7 +87,7 @@ function lib.on_tick(event)
                     end
                 else
                     item.slot.destroy()
-                    item.destroy()
+                    id.destroy()
                     shadow.destroy()
                     storage.vacuum_items[id] = nil
                     goto continue
@@ -112,7 +112,7 @@ function lib.on_tick(event)
         local scale = 1 / (item.height / 3 + 1)
         shadow.x_scale = scale
         shadow.y_scale = scale
-        item.orientation = item.orientation + item.orientation_deviation * math.min(1, item.time / 30)
+        --item.orientation = item.orientation + item.orientation_deviation * math.min(1, item.time / 30)
 
         ::continue::
     end
