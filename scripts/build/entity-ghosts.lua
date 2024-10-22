@@ -81,7 +81,8 @@ function lib.action(item)
         if success == nil then
             utils.spill_item(item)
         else
-            entity.health = item.health * entity.prototype.max_health
+            local max_health = entity.prototype.get_max_health(item.quality)
+            entity.health = item.health * max_health
             script.raise_script_revive{entity = entity}
         end
     else

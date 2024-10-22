@@ -17,13 +17,13 @@ local lib = {}
 ---@param event EventData.on_tick
 function lib.on_tick(event)
     for id, item in pairs(storage.flying_items) do
+        local shadow = item.shadow
         local time_remaining = item.end_tick - event.tick
 
         if time_remaining == 0 then
             actions[item.action](item)
-
-            rendering.destroy(id)
-            rendering.destroy(item.shadow)
+            id.destroy()
+            shadow.destroy()
             storage.flying_items[id] = nil
             goto continue
         end
@@ -37,20 +37,21 @@ function lib.on_tick(event)
         local ground_pos = vec.add(item.source_pos, lerp)
         local air_pos = vec.add(ground_pos, {x = 0, y = -height})
         local shadow_pos = vec.add(ground_pos, {x = height, y = 0})
-
-        rendering.set_target(id, air_pos)
-        rendering.set_orientation(id, rendering.get_orientation(id) + item.orientation_deviation)
+        
+        item.target = air_pos
+        --item.orientation = item.orientation + item.orientation_deviation
 
         local scale = 1 / (height / 3 + 1)
-        rendering.set_target(item.shadow, shadow_pos)
-        rendering.set_x_scale(item.shadow, scale)
-        rendering.set_y_scale(item.shadow, scale)
+        shadow.target = shadow_pos
+        shadow.x_scale = scale
+        shadow.y_scale = scale
 
         ::continue::
     end
 
     for id, item in pairs(storage.vacuum_items) do
         item.time = item.time + 1
+        local shadow = item.shadow
 
         if not (item.falling or item.character.valid) then
             item.falling = item.time
@@ -65,8 +66,8 @@ function lib.on_tick(event)
                 utils.exact_spill(item.surface, item.position, item.slot[1], item.deconstruct)
                 game.play_sound{path = "utility/drop_item", position = item.position}
                 item.slot.destroy()
-                rendering.destroy(id)
-                rendering.destroy(item.shadow)
+                item.destroy()
+                shadow.destroy()
                 storage.vacuum_items[id] = nil
                 goto continue
             end
@@ -86,8 +87,8 @@ function lib.on_tick(event)
                     end
                 else
                     item.slot.destroy()
-                    rendering.destroy(id)
-                    rendering.destroy(item.shadow)
+                    item.destroy()
+                    shadow.destroy()
                     storage.vacuum_items[id] = nil
                     goto continue
                 end
@@ -105,15 +106,13 @@ function lib.on_tick(event)
             item.velocity = new_velocity
             item.position = vec.add(new_velocity, item.position)
         end
-
-        rendering.set_target(id, vec.add(item.position, {x = 0, y = -item.height}))
-        rendering.set_target(item.shadow, vec.add(item.position, {x = item.height, y = 0}))
+        item.target = vec.add(item.position, {x = 0, y = -item.height})
+        shadow.target = vec.add(item.position, {x = item.height, y = 0})
 
         local scale = 1 / (item.height / 3 + 1)
-        rendering.set_x_scale(item.shadow, scale)
-        rendering.set_y_scale(item.shadow, scale)
-
-        rendering.set_orientation(id, rendering.get_orientation(id) + item.orientation_deviation * math.min(1, item.time / 30))
+        shadow.x_scale = scale
+        shadow.y_scale = scale
+        item.orientation = item.orientation + item.orientation_deviation * math.min(1, item.time / 30)
 
         ::continue::
     end
