@@ -13,7 +13,7 @@ function utils.get_character_data(character)
     ---@field volume float
     data = {character = character, mode = "build", tick = 0, volume = 0}
     storage.characters[character.unit_number] = data
-    script.register_on_entity_destroyed(character)
+    script.register_on_object_destroyed(character)
     return data
 end
 

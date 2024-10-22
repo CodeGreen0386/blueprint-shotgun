@@ -190,11 +190,11 @@ script.on_event(e.on_tick, function(event)
     sound.on_tick(event)
 end)
 
---script.on_event(e.on_entity_destroyed, function(event)
---    if not event.unit_number then return end
---    storage.characters[event.unit_number] = nil
---    storage.to_explode[event.registration_number] = nil
---end)
+script.on_event(e.on_object_destroyed, function(event)
+    if not event.unit_number then return end
+    storage.characters[event.unit_number] = nil
+    storage.to_explode[event.registration_number] = nil
+end)
 
 script.on_event(e.on_surface_deleted, function(event)
     for id, item in pairs(storage.flying_items) do

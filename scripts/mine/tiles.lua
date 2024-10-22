@@ -19,7 +19,7 @@ function lib.process(params)
     if #entities == 0 then return end
 
     for _, proxy in pairs(entities) do
-        local proxy_id = script.register_on_entity_destroyed(proxy)
+        local proxy_id = script.register_on_object_destroyed(proxy)
         local data = storage.to_mine[proxy_id]
         if not data then
             local mineable_properties = proxy.prototype.mineable_properties

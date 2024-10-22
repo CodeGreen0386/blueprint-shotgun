@@ -22,7 +22,7 @@ function lib.process(params)
         local explosive_name = cliff.prototype.cliff_explosive_prototype --[[@as string]]
         if params.inventory.get_item_count(explosive_name) == 0 then goto continue end
 
-        if storage.to_explode[script.register_on_entity_destroyed(cliff)] then goto continue end
+        if storage.to_explode[script.register_on_object_destroyed(cliff)] then goto continue end
 
         local capsule_action = game.item_prototypes[explosive_name].capsule_action --[[@as CapsuleAction]]
         local cliff_position = utils.get_bounding_box_center(cliff)
@@ -47,7 +47,7 @@ function lib.process(params)
             radius = capsule_action.radius + 1
         })
         for _, exploding_cliff in pairs(exploding_cliffs) do
-            local reg_id = script.register_on_entity_destroyed(exploding_cliff)
+            local reg_id = script.register_on_object_destroyed(exploding_cliff)
             storage.to_explode[reg_id] = true
             to_explode[reg_id] = true
         end

@@ -23,7 +23,7 @@ function lib.process(params)
         end
         if entity.minable == false then goto continue end
         if entity.prototype.mineable_properties.minable == false then goto continue end
-        local entity_id = entity.unit_number or script.register_on_entity_destroyed(entity)
+        local entity_id = entity.unit_number or script.register_on_object_destroyed(entity)
         local data = storage.to_mine[entity_id]
         if not data then
             local mineable_properties = entity.prototype.mineable_properties
