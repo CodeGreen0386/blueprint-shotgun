@@ -115,6 +115,7 @@ local function upgrade(item)
         name = target.name,
         position = position,
         direction = entity.direction,
+        mirror = entity.mirroring,
         force = force,
         fast_replace = true,
         character = character,
@@ -124,18 +125,18 @@ local function upgrade(item)
     }
 
     if lines then
-        ---@cast connection -?
         connection = surface.create_entity{
             name = target.name,
             position = connection.position,
             direction = connection.direction,
+            mirror = connection.mirroring, -- technically unnecessary but doesn't hurt
             force = force,
             fast_replace = true,
             character = character,
             create_build_effect_smoke = true,
             raise_built = true,
             type = connection.belt_to_ground_type
-        }
+        } ---@cast connection -?
 
         if connection ~= success then
             item.slot[1].count = item.slot[1].count / 2
