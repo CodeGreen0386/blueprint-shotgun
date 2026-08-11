@@ -90,7 +90,7 @@ local function upgrade(item)
         lines = {}
         local output = entity.belt_to_ground_type == "input" and entity or item.connection --[[@as LuaEntity]]
         for i = 1, 2 do
-            local line = output.get_transport_line(i + 2 --[[@as defines.transport_line]])
+            local line = output.get_transport_line(i + 2) ---@diagnostic disable-line: param-type-mismatch
             local contents = line.get_detailed_contents()
             local inventory = game.create_inventory(#contents)
             for j = #contents, 1, -1 do
@@ -103,6 +103,8 @@ local function upgrade(item)
         end
     end
 
+    local stack = item.slot[1]
+    local quality = stack.quality
     local surface = entity.surface
     local force = entity.force
     local position = entity.position
@@ -116,6 +118,7 @@ local function upgrade(item)
         position = position,
         direction = entity.direction,
         mirror = entity.mirroring,
+        quality = quality,
         force = force,
         fast_replace = true,
         character = character,
@@ -130,6 +133,7 @@ local function upgrade(item)
             position = connection.position,
             direction = connection.direction,
             mirror = connection.mirroring, -- technically unnecessary but doesn't hurt
+            quality = quality,
             force = force,
             fast_replace = true,
             character = character,
@@ -139,7 +143,7 @@ local function upgrade(item)
         } ---@cast connection -?
 
         if connection ~= success then
-            item.slot[1].count = item.slot[1].count / 2
+            stack.count = stack.count / 2
         end
     end
 
