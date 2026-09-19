@@ -1,12 +1,16 @@
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
 local e = defines.events
 
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
 
-local flying_items = require("scripts/flying-items") --[[@as BlueprintShotgun.flying_items]]
-local sound = require("scripts/sound") --[[@as BlueprintShotgun.sound]]
-local cliffs = require("scripts/build/cliffs") --[[@as BlueprintShotgun.cliffs]]
+local flying_items = require("scripts/flying-items")
+local sound = require("scripts/sound")
+local cliffs = require("scripts/build/cliffs")
 
 local build = {
     cliffs = cliffs.process,
@@ -23,33 +27,36 @@ local mine = {
     require("scripts/mine/proxies"),
 }
 
-local function setup_globals()
-    ---@type table<uint, FlyingItem>
-    storage.flying_items = storage.flying_items or {}
-    ---@type table<uint, VacuumItem>
-    storage.vacuum_items = storage.vacuum_items or {}
-    ---@type table<uint, uint[]?>
-    storage.remove_explode_queue = storage.remove_explode_queue or {}
-    ---@type table<uint, true>
-    storage.to_explode = storage.to_explode or {}
-    ---@type table<uint, true>
-    storage.to_build = storage.to_build or {}
-    ---@type table<uint, true>
-    storage.to_upgrade = storage.to_upgrade or {}
-    ---@type table<uint, BlueprintShotgun.MiningData>
-    storage.to_mine = storage.to_mine or {}
-    ---@type table<uint, true>
-    storage.currently_mining = storage.currently_mining or {}
-    ---@type table<uint, BlueprintShotgun.CharacterData>
-    storage.characters = storage.characters or {}
+local function setup_storage()
+    ---@class Storage
+    storage = {
+        ---@type table<uint, FlyingItem>
+        flying_items = storage.flying_items or {},
+        ---@type table<uint, VacuumItem>
+        vacuum_items = storage.vacuum_items or {},
+        ---@type table<uint, uint[]?>
+        remove_explode_queue = storage.remove_explode_queue or {},
+        ---@type table<uint, true>
+        to_explode = storage.to_explode or {},
+        ---@type table<uint, true>
+        to_build = storage.to_build or {},
+        ---@type table<uint, true>
+        to_upgrade = storage.to_upgrade or {},
+        ---@type table<uint, BlueprintShotgun.MiningData>
+        to_mine = storage.to_mine or {},
+        ---@type table<uint, true>
+        currently_mining = storage.currently_mining or {},
+        ---@type table<uint, BlueprintShotgun.CharacterData>
+        characters = storage.characters or {},
 
-    ---@type table<string, true>?
-    storage.cubes = script.active_mods["Ultracube"] and remote.call("Ultracube", "cube_item_prototypes")
+        ---@type table<string, true>?
+        cubes = script.active_mods["Ultracube"] and remote.call("Ultracube", "cube_item_prototypes")
+    }
 end
 
-script.on_init(setup_globals)
+script.on_init(setup_storage)
 script.on_configuration_changed(function()
-    setup_globals()
+    setup_storage()
 
     for _, data in pairs(storage.characters) do
         if data.auto_swap == nil then
@@ -122,6 +129,7 @@ end)
 
 script.on_event(e.on_runtime_mod_setting_changed, function(event)
     if event.setting_type ~= "runtime-per-user" then return end
+    ---@cast event.player_index uint32
     local player = game.get_player(event.player_index) --[[@as LuaPlayer]]
     if not player.character then return end
 
@@ -177,14 +185,14 @@ script.on_event(e.on_script_trigger_effect, function(event)
     if technologies["blueprint-shotgun-upgrade-2"].researched then bonus = bonus + 1 end
 
     local inventory = character.get_main_inventory() --[[@as LuaInventory]]
-    local gun_index = character.selected_gun_index
+    local gun_index = character.selected_gun_index --[[@as uint32]]
     local ammo_inv = character.get_inventory(defines.inventory.character_ammo) --[[@as LuaInventory]]
-    local ammo_item = ammo_inv[gun_index]
-    local ammo_limit = math.min(4 + 2 * bonus, (ammo_item.count - 1) * ammo_item.prototype.stack_size + ammo_item.ammo) --[[@as number]]
+    local ammo_item = ammo_inv[gun_index] --[[@as LuaItemStack]]
+    local ammo_limit = math.min(4 + 2 * bonus, (ammo_item.count - 1) * ammo_item.prototype.stack_size + ammo_item.ammo) --[[@as uint]]
 
     local target_direction = math.floor((math.atan2(-source_pos.x + target_pos.x, source_pos.y - target_pos.y) / (2 * math.pi) + 17/16) % 1 * 8) * 2
 
-    ---@class BlueprintShotgun.HandlerParams
+    ---@class HandlerParams
     ---@field ammo_limit integer -- required to be mutable for some stupid reason
     local params = {
         surface = surface,

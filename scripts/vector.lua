@@ -1,8 +1,8 @@
+---@namespace BlueprintShotgun
+
 local sqrt, sin, cos = math.sqrt, math.sin, math.cos
-local min, max = math.min, math.max
 local tau = math.pi * 2
 
----@class BlueprintShotgun.vector
 local vec = {}
 
 function vec.zero() return {x = 0, y = 0} end
@@ -56,12 +56,5 @@ local abs = math.abs
 function vec.abs(v)
     return {x = abs(v.x), y = abs(v.y)}
 end
-
--- function vec.clamp(v, n, m)
---     return {
---         x = max(min(v.x, n), m),
---         y = max(min(v.y, n), m),
---     }
--- end
 
 return vec

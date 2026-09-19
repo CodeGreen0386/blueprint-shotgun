@@ -1,7 +1,10 @@
-require("util")
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
 
----@class BlueprintShotgun.utils
+require("util")
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
+
 local utils = {}
 
 ---@generic T
@@ -19,12 +22,13 @@ end
 
 ---@param character LuaEntity
 function utils.get_character_data(character)
-    local data = storage.characters[character.unit_number]
+    local unit_number = character.unit_number --[[@as uint64]]
+    local data = storage.characters[unit_number]
     if data then return data end
-    ---@class BlueprintShotgun.CharacterData
+    ---@class CharacterData
     ---@field volume float
     data = {character = character, mode = "build", auto_swap = true, aim_position = true, tick = 0, volume = 0, cooldown = 0}
-    storage.characters[character.unit_number] = data
+    storage.characters[unit_number] = data
 
     local player = character.player
     if player then
@@ -73,7 +77,7 @@ end
 
 ---@param source_pos MapPosition
 ---@param target_pos MapPosition
----@return number
+---@return uint
 function utils.get_flying_item_duration(source_pos, target_pos)
     return math.max(1, math.ceil((vec.dist(source_pos, target_pos) * (math.random() / 4 + 1)) * 3))
 end
@@ -97,9 +101,9 @@ function utils.get_item_count_aq(inventory, item)
 end
 
 ---@param inventory LuaInventory
----@param items ItemStackDefinition[]
+---@param items ItemToPlace[]
 ---@param quality QualityID
----@return ItemStackDefinition?, LuaItemStack?
+---@return ItemToPlace?, LuaItemStack?
 function utils.find_place_result_stack(inventory, items, quality)
     for _, item in pairs(items) do
         if inventory.get_item_count{name = item.name, quality = quality} >= item.count then
@@ -127,7 +131,7 @@ local spill_offset = {x = 88/256, y = 88/256}
 ---@param surface LuaSurface
 ---@param position MapPosition
 ---@param stack LuaItemStack
----@param force ForceID
+---@param force? ForceID
 function utils.exact_spill(surface, position, stack, force)
     return surface.spill_item_stack{
         position = vec.add(position, spill_offset),
@@ -135,32 +139,6 @@ function utils.exact_spill(surface, position, stack, force)
         force = force,
         allow_belts = false,
     }
-end
-
----@param surface LuaSurface
----@param prototype LuaEntityPrototype|LuaTilePrototype
----@param force ForceID
-function utils.spill_products(surface, position, prototype, force)
-    local products = prototype.mineable_properties.products
-    if products then
-        local stacks = {}
-        local c = 0
-        for _, product in pairs(products) do
-            if product.amount then
-                c = c + 1
-                stacks[c] = {name = product.name, count = product.amount}
-            elseif math.random() <= product.independent_probability then
-                c = c + 1
-                stacks[c] = {
-                    name = product.name,
-                    count = math.random(product.amount_min, product.amount_max)
-                }
-            end
-        end
-        for _, stack in pairs(stacks) do
-            utils.exact_spill(surface, position, stack, force)
-        end
-    end
 end
 
 ---@param surface LuaSurface
@@ -259,16 +237,16 @@ end
 ---@param count uint
 ---@param surface SurfaceIdentification
 ---@param position MapPosition
----@param velocity MapPosition
 ---@param height number
-function utils.create_ultracube_token(name, count, surface, position, velocity, height)
+---@param velocity? Vector
+function utils.create_ultracube_token(name, count, surface, position, height, velocity)
     return remote.call("Ultracube", "create_ownership_token", name, count, 60, {
         surface = surface,
         position = position,
         spill_position = position,
         velocity = velocity,
         height = height,
-    })
+    }) --[[@as uint]]
 end
 
 return utils

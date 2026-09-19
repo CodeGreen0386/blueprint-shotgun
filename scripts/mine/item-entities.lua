@@ -1,6 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
 
 local ultracube_active = script.active_mods["Ultracube"]
 
@@ -41,9 +45,10 @@ return function(params)
         slot[1].transfer_stack(stack) -- destroys the item
 
         if ultracube_active then
-            local name = vacuum_item.name
+            local slot_item = slot[1]
+            local name = slot_item.name
             if storage.cubes[name] then
-                vacuum_item.ultracube_token = utils.create_ultracube_token(name, slot[1].count, params.surface, position, vacuum_item.velocity, 0)
+                vacuum_item.ultracube_token = utils.create_ultracube_token(name, slot_item.count, params.surface, position, 0, vacuum_item.velocity)
             end
         end
 

@@ -1,6 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
 
 ---@type table<string, LuaItemPrototype>
 local cliff_explosive_items = {}
@@ -14,7 +18,7 @@ end
 ---@type table<string, string>
 local projectiles = {}
 for name, item in pairs(cliff_explosive_items) do
-    for _, action in pairs(item.capsule_action.attack_parameters.ammo_type.action) do
+    for _, action in pairs(item.capsule_action.attack_parameters.ammo_type.action --[[@as TriggerItem[] ]]) do
         if action.action_delivery then
             for _, delivery in pairs(action.action_delivery) do
                 if delivery.type == "projectile" then
@@ -25,7 +29,6 @@ for name, item in pairs(cliff_explosive_items) do
     end
 end
 
----@class BlueprintShotgun.cliffs
 local lib = {}
 
 ---@param params BlueprintShotgun.HandlerParams

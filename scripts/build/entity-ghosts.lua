@@ -1,7 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
 
----@class BlueprintShotgun.entity-ghosts
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+
 local lib = {}
 
 ---@param params BlueprintShotgun.HandlerParams
@@ -31,6 +34,7 @@ function lib.process(params)
             goto continue
         end
 
+        ---@cast ghost.ghost_prototype.items_to_place_this -?
         local item, stack = utils.find_place_result_stack(params.inventory, ghost.ghost_prototype.items_to_place_this, ghost.quality)
         if not item then goto continue end
         ---@cast stack -?
@@ -56,6 +60,7 @@ function lib.process(params)
             unit_number = ghost.unit_number,
         } --[[@as FlyingBuildItem]]
 
+        ---@cast ghost.unit_number -?
         storage.to_build[ghost.unit_number] = true
 
         used = true
@@ -75,7 +80,7 @@ local function try_revive(item)
     if not target_entity.valid then return end
 
     local item_name = item.slot[1].name
-    for _, place in pairs(target_entity.ghost_prototype.items_to_place_this) do
+    for _, place in pairs(target_entity.ghost_prototype.items_to_place_this --[[@as ItemToPlace[] ]]) do
         if place.name == item_name then
             goto forelse
         end

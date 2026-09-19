@@ -1,5 +1,9 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
 
 local actions = {
     build   = require("scripts/build/entity-ghosts").action,
@@ -9,7 +13,6 @@ local actions = {
     tile    = require("scripts/build/tile-ghosts").action,
 }
 
----@class BlueprintShotgun.flying_items
 local lib = {}
 
 ---@param event EventData.on_tick
@@ -18,6 +21,7 @@ function lib.on_tick(event)
         local time_remaining = item.end_tick - event.tick
 
         if time_remaining <= 0 then
+            ---@diagnostic disable-next-line: param-type-mismatch
             actions[item.action](item)
 
             item.slot.destroy()
@@ -26,7 +30,7 @@ function lib.on_tick(event)
             storage.flying_items[id] = nil
             if item.ultracube_token then
                 remote.call("Ultracube", "release_ownership_token", item.ultracube_token)
-                remote.call("Ultracube", "hint_entity", item.target_entity)
+                remote.call("Ultracube", "hint_entity", item.target_entity --[[@as LuaEntity]])
             end
 
             goto continue
@@ -79,7 +83,7 @@ function lib.on_tick(event)
                 storage.vacuum_items[id] = nil
                 if item.ultracube_token then
                     remote.call("Ultracube", "release_ownership_token", item.ultracube_token)
-                    remote.call("Ultracube", "hint_entity", ground_items[1])
+                    remote.call("Ultracube", "hint_entity", ground_items[1] --[[@as LuaEntity]])
                 end
                 goto continue
             end

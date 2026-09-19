@@ -1,7 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
 
----@class BlueprintShotgun.proxies
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+
 local lib = {}
 
 local ultracube_active = script.active_mods["Ultracube"]
@@ -31,7 +34,7 @@ function lib.process(params)
         local requests = proxy.item_requests
         local inventory = params.inventory
         for _, request in pairs(requests) do
-            local min_count = math.min(inventory.get_item_count{name = request.name, quality = request.quality}, request.count)
+            local min_count = math.min(inventory.get_item_count{name = request.name, quality = request.quality}, request.count) --[[@as int]]
             if min_count > 0 then
                 stack = inventory.find_item_stack({name = request.name, quality = request.quality}) --[[@as LuaItemStack]]
                 if target.can_insert(stack) then
@@ -43,14 +46,16 @@ function lib.process(params)
         end
         if not item then goto continue end
 
-        local inventory_positions = {} ---@type InventoryPosition[]
-        local grid_positions = {} ---@type EquipmentPosition[]
+        local inventory_positions = {} ---@type InventoryPosition[]?
+        local grid_positions = {} ---@type EquipmentPosition[]?
         local insert_plan = proxy.insert_plan
         for i, plan in pairs(insert_plan) do
             if plan.id.name == item.name then
                 local items = plan.items
                 if items.in_inventory then
-                    for j, inventory_position in pairs(plan.items.in_inventory) do
+                    grid_positions = nil
+
+                    for j, inventory_position in pairs(items.in_inventory) do
                         local insert_position = table.deepcopy(inventory_position)
                         inventory_positions[#inventory_positions+1] = insert_position
                         count = count - (inventory_position.count or 1)
@@ -58,17 +63,19 @@ function lib.process(params)
                             insert_position.count = (inventory_position.count or 1) + count
                             inventory_position.count = -count
                         else
-                            plan.items.in_inventory[j] = nil
+                            items.in_inventory[j] = nil
                         end
                         if count <= 0 then break end
                     end
 
-                    items.in_inventory = utils.condense(plan.items.in_inventory)
+                    items.in_inventory = utils.condense(items.in_inventory)
                 else
+                    inventory_positions = nil
+
                     local grid = target.grid --[[@as LuaEquipmentGrid]]
                     local prototype = prototypes.item[item.name].place_as_equipment_result --[[@as LuaEquipmentPrototype]]
                     local name = prototype.name
-                    local grid_count = items.grid_count
+                    local grid_count = items.grid_count --[[@as ItemCountType]]
                     local equipments = {} ---@type LuaEquipment[]
                     local c = 0
                     for _, equipment in pairs(grid.equipment) do
@@ -116,12 +123,12 @@ function lib.process(params)
             target_entity = target,
             inventory_positions = inventory_positions,
             grid_positions = grid_positions,
-            unit_number = proxy.unit_number,
+            unit_number = proxy.unit_number --[[@as uint64]],
         } --[[@as FlyingRequestItem]]
         storage.flying_items[sprite.id] = flying_item
 
         if ultracube_active and storage.cubes[item.name] then
-            flying_item.ultracube_token = utils.create_ultracube_token(item.name, item.count, params.surface, proxy.position, flying_item.velocity, 1)
+            flying_item.ultracube_token = utils.create_ultracube_token(item.name, item.count, params.surface, proxy.position, 1)
         end
 
         used = true
@@ -134,26 +141,36 @@ function lib.process(params)
     return used
 end
 
+---@param target_entity LuaEntity
+---@param item_stack LuaItemStack
+---@param position InventoryPosition
+local function try_insert(target_entity, item_stack, position)
+    local inventory = target_entity.get_inventory(position.inventory)
+    if not inventory then return end
+    local index = position.stack + 1
+    if index > #inventory then return end
+    local stack = inventory[index] --[[@as LuaItemStack]]
+    return stack.transfer_stack(item_stack, index)
+end
+
 ---@param item FlyingRequestItem
 function lib.action(item)
     local target_entity = item.target_entity
     if target_entity.valid then
         local item_stack = item.slot[1]
-        if item.inventory_positions[1] then
+        if item.inventory_positions then
             local inserted
             for _, position in pairs(item.inventory_positions) do
-                local inventory = target_entity.get_inventory(position.inventory) --[[@as LuaInventory]]
-                local stack = inventory[position.stack + 1]
-                if stack.transfer_stack(item_stack, position.count or 1) then
+                if try_insert(target_entity, item_stack, position) then
                     inserted = true
                 else
                     utils.spill_item(item)
                 end
-                if inserted then
-                    game.play_sound{path = "utility/inventory_move", position = item.target_pos}
-                end
             end
-        else
+            if inserted then
+                game.play_sound{path = "utility/inventory_move", position = item.target_pos}
+            end
+        else ---@cast item.grid_positions -?
             local grid = target_entity.grid --[[@as LuaEquipmentGrid]]
             local equipment = item_stack.prototype.place_as_equipment_result --[[@as LuaEquipmentPrototype]]
             local inserted

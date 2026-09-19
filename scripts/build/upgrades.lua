@@ -1,7 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
 
----@class BlueprintShotgun.upgrades
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+
 local lib = {}
 
 ---@param params BlueprintShotgun.HandlerParams
@@ -24,7 +27,7 @@ function lib.process(params)
         ---@cast upgrade_target -?
         ---@cast quality -?
 
-        local item, stack = utils.find_place_result_stack(params.inventory, upgrade_target.items_to_place_this, quality)
+        local item, stack = utils.find_place_result_stack(params.inventory, upgrade_target.items_to_place_this --[[@as ItemToPlace[] ]], quality)
         if not item then goto continue end
         ---@cast stack -?
 
@@ -35,6 +38,7 @@ function lib.process(params)
                 -- impossible for connection to not be marked for upgrade so no need to check
                 item.count = item.count * 2
                 if stack.count < item.count then goto continue end
+                ---@cast connection.unit_number -?
                 storage.to_upgrade[connection.unit_number] = true
             else
                 connection = nil
@@ -63,6 +67,7 @@ function lib.process(params)
             connection = connection,
         } --[[@as FlyingUpgradeItem]]
 
+        ---@cast entity.unit_number -?
         storage.to_upgrade[entity.unit_number] = true
 
         used = true
@@ -143,7 +148,7 @@ local function upgrade(item)
         } ---@cast connection -?
 
         if connection ~= success then
-            stack.count = stack.count / 2
+            stack.count = (stack.count / 2) --[[@as uint32]]
         end
     end
 
@@ -165,7 +170,7 @@ local function upgrade(item)
                 local line = lines[i]
                 local contents = line.contents
                 local inventory = line.inventory
-                local insert = output.get_transport_line(i + 2 --[[@as defines.transport_line]]).force_insert_at
+                local insert = output.get_transport_line((i + 2) --[[@as defines.transport_line]]).force_insert_at
                 for j = 1, #inventory do
                     insert(contents[j].position, inventory[j])
                 end

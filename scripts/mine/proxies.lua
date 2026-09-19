@@ -1,6 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
 
 ---@param params BlueprintShotgun.HandlerParams
 return function(params)
@@ -55,7 +59,7 @@ return function(params)
                         grid.take{equipment = equipment}
                     end
                 end
-                items.grid_count = items.grid_count - slot[1].count
+                items.grid_count = (items.grid_count - slot[1].count) --[[@as ItemCountType]]
 
                 vacuum_limit = vacuum_limit - 1
                 params.ammo_item.drain_ammo(0.125)

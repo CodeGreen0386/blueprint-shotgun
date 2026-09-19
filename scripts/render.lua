@@ -1,6 +1,9 @@
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
 
----@class BlueprintShotgun.render
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
+
 local render = {}
 
 ---@param surface LuaSurface

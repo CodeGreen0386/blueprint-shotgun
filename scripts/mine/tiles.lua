@@ -1,6 +1,10 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local vec = require("scripts/vector") --[[@as BlueprintShotgun.vector]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vector"
 
 ---@param params BlueprintShotgun.HandlerParams
 return function(params)
@@ -51,7 +55,7 @@ return function(params)
         end
 
         for i = 1, #temp_inventory do
-            local item = temp_inventory[i]
+            local item = temp_inventory[i] --[[@as LuaItemStack]]
             if not item.valid_for_read then break end
             local sprite, shadow = render.draw_new_item(params.surface, item.name, position, 0)
             sprite.move_to_back()

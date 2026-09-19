@@ -1,4 +1,7 @@
----@class BlueprintShotgun.sound
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
+
 local lib = {}
 
 local threshold = -0.75
@@ -14,6 +17,7 @@ function lib.on_tick(event)
                 if data.mode ~= "mine" then goto continue end
                 character.surface.play_sound{path = "blueprint-shotgun-vacuum-start", volume_modifier = 0.25, position = character.position}
             end
+            ---@diagnostic disable-next-line: param-type-mismatch
             data.volume = math.min(1, math.max(0, data.volume) + 1/5)
         else
             data.volume = math.max(threshold, data.volume - 1/10)

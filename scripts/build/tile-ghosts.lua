@@ -1,8 +1,11 @@
-local utils = require("scripts/utils") --[[@as BlueprintShotgun.utils]]
-local render = require("scripts/render") --[[@as BlueprintShotgun.render]]
-local cmu = require("collision-mask-util")
+---@namespace BlueprintShotgun
+---@type Storage -- emmylua jank
+storage = storage --[[@as Storage]]
 
----@class BlueprintShotgun.tile-ghosts
+local render = require("scripts/render") ---@module "blueprint-shotgun/scripts/render"
+local utils = require("scripts/utils") ---@module "blueprint-shotgun/scripts/utils"
+local cmu = require("collision-mask-util") ---@diagnostic disable-line: unresolved-require
+
 local lib = {}
 
 ---@param params BlueprintShotgun.HandlerParams
@@ -59,6 +62,7 @@ function lib.process(params)
             unit_number = ghost.unit_number,
         } --[[@as FlyingTileItem]]
 
+        ---@cast ghost.unit_number -?
         storage.to_build[ghost.unit_number] = true
 
         used = true
@@ -106,5 +110,3 @@ return lib
 ---@field action "tile"
 ---@field target_entity LuaEntity
 ---@field unit_number uint
-
--- TODO: change utils.spill_products to use LuaControl::mine_tile

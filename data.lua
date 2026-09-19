@@ -161,6 +161,7 @@ for i = 1, 2 do
     local ingredients = {{"automation-science-pack", 1}}
     local prerequisites = i == 1 and {"blueprint-shotgun"} or {"blueprint-shotgun-upgrade-1", "logistic-science-pack"}
     if i == 2 then
+        ---@diagnostic disable-next-line: inject-field
         ingredients[2] = {"logistic-science-pack", 1}
     end
 
