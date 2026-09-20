@@ -49,8 +49,7 @@ local function setup_storage()
         ---@type table<uint, BlueprintShotgun.CharacterData>
         characters = storage.characters or {},
 
-        ---@type table<string, true>?
-        cubes = script.active_mods["Ultracube"] and remote.call("Ultracube", "cube_item_prototypes")
+        cubes = script.active_mods["Ultracube"] and remote.call("Ultracube", "cube_item_prototypes") --[[@as table<string, true>]]
     }
 end
 
@@ -88,7 +87,7 @@ script.on_event("blueprint-shotgun-mode-swap", function(event)
     if not player.character then return end
     local data = utils.get_character_data(player.character)
     local gun_inv = data.character.get_inventory(defines.inventory.character_guns) --[[@as LuaInventory]]
-    local gun = gun_inv[data.character.selected_gun_index]
+    local gun = gun_inv[data.character.selected_gun_index --[[@as uint]]]
     if not (gun and gun.valid_for_read) then return end
     if gun.name ~= "blueprint-shotgun" then return end
     local text

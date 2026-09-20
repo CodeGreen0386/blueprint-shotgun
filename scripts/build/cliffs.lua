@@ -23,6 +23,8 @@ for name, item in pairs(cliff_explosive_items) do
             for _, delivery in pairs(action.action_delivery) do
                 if delivery.type == "projectile" then
                     projectiles[name] = delivery.projectile -- assumes only projectile is cliff explosive
+                elseif delivery.type == "stream" then
+                    projectiles[name] = delivery.stream
                 end
             end
         end
@@ -118,6 +120,7 @@ function lib.action(item)
     item.surface.create_entity{
         name = projectiles[item.slot[1].name],
         position = item.target_pos,
+        source = item.target_pos,
         target = item.target_pos,
         speed = 1,
     }
