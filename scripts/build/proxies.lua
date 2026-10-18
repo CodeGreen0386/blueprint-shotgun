@@ -38,8 +38,8 @@ function lib.process(params)
             if min_count > 0 then
                 stack = inventory.find_item_stack({name = request.name, quality = request.quality}) --[[@as LuaItemStack]]
                 if target.can_insert(stack) then
-                    item = {name = request.name, count = min_count, quality = request.quality}
-                    count = min_count
+                    count = math.min(min_count, stack.prototype.stack_size)
+                    item = {name = request.name, count = count, quality = request.quality}
                     break
                 end
             end
