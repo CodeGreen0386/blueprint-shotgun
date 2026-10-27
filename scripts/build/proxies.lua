@@ -150,7 +150,7 @@ local function try_insert(target_entity, item_stack, position)
     local index = position.stack + 1
     if index > #inventory then return end
     local stack = inventory[index] --[[@as LuaItemStack]]
-    return stack.transfer_stack(item_stack, position.count)
+    return stack.transfer_stack(item_stack, position.count or 1)
 end
 
 ---@param item FlyingRequestItem
