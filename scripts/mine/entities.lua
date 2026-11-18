@@ -8,6 +8,11 @@ local vec = require("scripts/vector") ---@module "blueprint-shotgun/scripts/vect
 
 local ultracube_active = script.active_mods["Ultracube"]
 
+local blacklist_types = {
+    ["infinity-container"] = true,
+    ["proxy-container"] = true,
+}
+
 ---@param params BlueprintShotgun.HandlerParams
 return function(params)
     local entities = utils.find_entities_in_radius(params.surface, {
@@ -40,7 +45,7 @@ return function(params)
         end
 
         local stack
-        if entity.type ~= "infinity-container" then
+        if not blacklist_types[entity.type] then
             for i = 1, entity.get_max_inventory_index() do
                 local inventory = entity.get_inventory(i --[[@as defines.inventory]]) --[[@as LuaInventory]]
                 if inventory and not inventory.is_empty() then
